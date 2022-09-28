@@ -10,6 +10,27 @@ enum ImageDataErrors {
     DiffrentImageFormats,
 }
 
+struct FloatingImage {
+    width: u32,
+    height: u32,
+    data: Vec<u8>,
+    name: String,
+}
+
+impl FloatingImage {
+    fn new(width: u32, height: u32, name: String) -> Self {
+        let buffer_capacity = height * width * 4;
+        let buffer = Vec::with_capacity(buffer_capacity.try_into().unwrap());
+
+        FloatingImage {
+            width,
+            height,
+            data: buffer,
+            name,
+        }
+    }
+}
+
 fn main() -> Result<(), ImageDataErrors> {
     let args = Args::new();
     let (image_1, image_format_1) = find_image_from_path(args.image_1);
@@ -20,6 +41,7 @@ fn main() -> Result<(), ImageDataErrors> {
     }
 
     let (image_1, image_2) = standardise_size(image_1, image_2);
+    let output = FloatingImage::new(image_1.width(), image_2.height(), args.output);
     Ok(())
 }
 
